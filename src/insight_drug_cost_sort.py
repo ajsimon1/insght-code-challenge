@@ -10,6 +10,7 @@ standard lib packages could be used
 '''
 from faker import Faker
 import csv
+import random
 
 # TODO accept arg input from command line
 # TODO write func to build dummy data to test
@@ -41,9 +42,23 @@ def build_dummy_data(filename):
     npi_list = list(range(100000001,100000045))
     # build provder name list
     prov_list = [faker.name() for x in range(1, 33)]
+    prov_list = [x.split() for x in prov_list]
     # build cost list
     cost_list = list(range(5, 1000, 25))
-    return drug_name_set
+    # build final list
+    test_input = []
+    test_input.append(['id','prescriber_last_name','prescriber_first_name','drug_name','drug_cost'])
+    for a in range(1,101):
+        row = []
+        row.append(random.choice(npi_list))
+        prov = random.choice(prov_list)
+        row.append(prov[0])
+        row.append(prov[1])
+        row.append(random.choice(drug_name_set))
+        row.append(random.choice(cost_list))
+        row = ','.join(row)
+        test_input.append(row)
+    return test_input
 
 
 build_dummy_data(filename)
