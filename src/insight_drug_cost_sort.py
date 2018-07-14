@@ -8,57 +8,62 @@ https://github.com/InsightDataScience/pharmacy_counting
 outside lib faker only used to build test data, challenge stipulated only
 standard lib packages could be used
 '''
-from faker import Faker
 import csv
-import random
+import operator
+import sys
 
-# TODO accept arg input from command line
-# TODO write func to build dummy data to test
+from faker import Faker
 
-filename = 'unfinished_product.csv'
 faker = Faker()
 
-
-def build_dummy_data(filename):
-    '''
-    func builds out test input with dummy data using drug name list from fda
-    and 'faker' package
-    arguments:
-        filename --> should be in same folder as app
-    returns:
-        txt file formatted for immediate use
-    '''
-    # clean fda drug list, create set to avoid dupes
-    bad_chars = ['[', ']', "'"]
-    with open(filename, newline='') as f:
+def generate_results(in_file, out_file):
+    # paramter should be input txt file as list
+    # create dictionary
+    with open(in_file, newline='') as f:
         reader = csv.reader(f, delimiter=',')
-        drug_name_list = [row for row in reader]
-    drug_name_list = [str(x) for x in drug_name_list]
-    for ch in bad_chars:
-        drug_name_list = [x.replace(ch, '') for x in drug_name_list]
-    drug_name_list = [x for x in drug_name_list if len(x) < 15]
-    drug_name_set = set(drug_name_list)
-    # build npi list
-    npi_list = list(range(100000001,100000045))
-    # build provder name list
-    prov_list = [faker.name() for x in range(1, 33)]
-    prov_list = [x.split() for x in prov_list]
-    # build cost list
-    cost_list = list(range(5, 1000, 25))
-    # build final list
-    test_input = []
-    test_input.append(['id','prescriber_last_name','prescriber_first_name','drug_name','drug_cost'])
-    for a in range(1,101):
-        row = []
-        row.append(random.choice(npi_list))
-        prov = random.choice(prov_list)
-        row.append(prov[0])
-        row.append(prov[1])
-        row.append(random.choice(drug_name_set))
-        row.append(random.choice(cost_list))
-        row = ','.join(row)
-        test_input.append(row)
-    return test_input
+        a_list = [row for row in reader]
+    dict_drug_cnt = {}
+    f_list = []
+    for i in a_list:
+        prov_dict = {
+                'id': i[0],
+                'prov_last': i[1],
+                'prov_first': i[2],
+                }
+        if i[3] in dict_drug_cnt:
+            dict_drug_cnt[i[3]]['count'] += 1
+            dict_drug_cnt[i[3]]['total_cost'] += int(i[4] )
+            dict_drug_cnt[i[3]]['prov_list'].append(prov_dict)
+        else:
+            prov_dict = {
+                'id': i[0],
+                'prov_last': i[1],
+                'prov_first': i[2],
+                }
+            try:
+                dict_drug_cnt[i[3]] = {
+                    'count': 1,
+                    'total_cost': int(i[4]),
+                    'prov_list': list([prov_dict]),
+                }
+            except ValueError:
+                pass
+    for k, v in dict_drug_cnt.items():
+        f_list.append([k, v['count'], v['total_cost']])
+    s = sorted(f_list, key=operator.itemgetter(2,0), reverse=True)
+    header = ['drug_name','num_prescriber','total_cost']
+    with open(out_file, 'w', newline='') as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow(header)
+        writer.writerows(s)
+    return f_list
+
+if __name__ == '__main__':
+    if len(sys.argv) < 1:
+        print('No arguments provided, please provide input/output')
+    else:
+        in_file = str(sys.argv[1])
+        out_file = str(sys.argv[2])
+        out = generate_results(in_file, out_file)
 
 
-build_dummy_data(filename)
