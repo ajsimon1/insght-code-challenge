@@ -53,7 +53,7 @@ def build_dummy_data(filename):
     # build final list
     test_input = []
     test_input.append(headers)
-    for a in range(1,1000001):
+    for a in range(1,101):
         row = []
         a, b, c = random.choice(providers)
         row.append(a)

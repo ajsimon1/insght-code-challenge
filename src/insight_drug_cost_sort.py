@@ -73,7 +73,7 @@ def generate_results(in_file, out_file):
                     pass
     # iterate over dict, add to f_list in desired format
     for key, val in dict_drug_cnt.items():
-        f_list.append([key, val['count'], val['total_cost']])
+        final_list.append([key, val['count'], val['total_cost']])
     # sort list by total_cost then by drug name, reverse=True indicates descending
     sorted_list = sorted(final_list, key=operator.itemgetter(2,0), reverse=True)
     # create header rows for file
