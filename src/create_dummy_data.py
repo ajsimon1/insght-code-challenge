@@ -53,14 +53,14 @@ def build_dummy_data(filename):
     # build final list
     test_input = []
     test_input.append(headers)
-    for a in range(1,101):
+    for a in range(1,1000001):
         row = []
         a, b, c = random.choice(providers)
         row.append(a)
         row.append(b)
         row.append(c)
         row.append(random.choice(drug_final).upper())
-        row.append(random.choice(cost_list))        
+        row.append(random.choice(cost_list))
         test_input.append(row)
     return test_input
 
@@ -69,7 +69,7 @@ def output_csv(filename, out_list):
     with open(filename, 'w', newline='') as f:
         writer = csv.writer(f, delimiter=',')
         writer.writerows(out_list)
-        
+
 if __name__ == '__main__':
     out_file = str(sys.argv[1])
     inp = build_dummy_data(fda_drug_info)
