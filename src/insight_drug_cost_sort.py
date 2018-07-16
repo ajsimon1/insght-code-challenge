@@ -45,7 +45,7 @@ def generate_results(in_file, out_file):
     # iterate over input file contents, and add to dict creating 'count' of
     # providers that prescribed drug as well as 'total_cost' of drug
     # dict data type used to better organize results data
-    with open(in_file, newline='') as f:
+    with open(in_file) as f:
         reader = csv.reader(f, delimiter=',')
         for row in reader:
             prov_dict = {
@@ -78,7 +78,7 @@ def generate_results(in_file, out_file):
     sorted_list = sorted(final_list, key=operator.itemgetter(2,0), reverse=True)
     # create header rows for file
     header = ['drug_name','num_prescriber','total_cost']
-    with open(out_file, 'w', newline='') as f:
+    with open(out_file, 'w') as f:
         writer = csv.writer(f, delimiter=',')
         writer.writerow(header)
         writer.writerows(sorted_list)
