@@ -82,12 +82,14 @@ def generate_results(in_file, out_file):
         writer = csv.writer(f, delimiter=',')
         writer.writerow(header)
         writer.writerows(sorted_list)
-    return final_list
+    return final_list # returned list may not be needed, used during testing
 
 if __name__ == '__main__':
+    # ensure filenames are received as args, alert displayed to stdout if not
     if len(sys.argv) < 2:
         print('ALERT: No arguments provided, please provide input/output filenames')
     else:
         in_file = str(sys.argv[1])
         out_file = str(sys.argv[2])
+        # returned list added to var, this was used during testing
         out = generate_results(in_file, out_file)
